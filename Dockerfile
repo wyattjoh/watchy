@@ -11,7 +11,7 @@ RUN pnpm install
 RUN pnpm build
 
 ENV HOST=0.0.0.0
-ENV PORT=4321
+ENV PORT=3000
 EXPOSE ${PORT}
 
 CMD ["pnpm", "start"]

@@ -15,9 +15,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 23
-          cache: "pnpm"
       - name: Enable Corepack
         run: corepack enable pnpm
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install
       - name: Build
