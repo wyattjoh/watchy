@@ -1,43 +1,38 @@
-# use the official Bun image
-# see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1-alpine AS base
+FROM node:23-alpine AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+ENV COREPACK_HOME="/corepack"
+
 WORKDIR /usr/src/app
+COPY package.json pnpm-lock.yaml .
 
-# install dependencies into temp directory
-# this will cache them and speed up future builds
-FROM base AS install
-RUN mkdir -p /temp/dev
-COPY package.json bun.lockb /temp/dev/
-RUN cd /temp/dev && bun install --frozen-lockfile
-
-# install with --production (exclude devDependencies)
-RUN mkdir -p /temp/prod
-COPY package.json bun.lockb /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
-
-# copy node_modules from temp directory
-# then copy all (non-ignored) project files into the image
-FROM base AS prerelease
-COPY --from=install /temp/dev/node_modules node_modules
-COPY . .
-
-# [optional] tests & build
-ENV NODE_ENV=production
-RUN bun run build
-
-# copy production dependencies and source code into final image
-FROM base AS release
-COPY --from=install /temp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/app/next.config.mjs .
-COPY --from=prerelease /usr/src/app/.next /usr/src/app/.next
-COPY --from=prerelease /usr/src/app/package.json .
-
+# install runtime dependencies (including pnpm)
 RUN apk add --no-cache curl
+RUN corepack enable && corepack install
 
-# run as non-root user
-USER bun
+# install production dependencies
+FROM base AS install
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+
+# build the app and install all dependencies
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm run build
+
+# copy the built app and dependencies
+FROM base
+COPY --from=install /usr/src/app/node_modules node_modules
+COPY --from=build /usr/src/app/.next .next
+COPY --from=build /usr/src/app/next.config.mjs .
+COPY --from=build /usr/src/app/package.json .
+
+# set the user and environment variables
+USER node
 ENV HOST=0.0.0.0
 ENV PORT=3000
 EXPOSE ${PORT}
 
-CMD ["bun", "start"]
+# start the app
+CMD [ "pnpm", "start" ]
