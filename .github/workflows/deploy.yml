@@ -2,8 +2,8 @@ name: Deploy
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
 
 permissions:
   packages: write
@@ -11,11 +11,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
     steps:
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -32,10 +27,14 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: latest
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.platform }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
