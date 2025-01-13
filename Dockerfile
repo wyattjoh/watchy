@@ -28,8 +28,7 @@ COPY --from=build /usr/src/app/.next .next
 COPY --from=build /usr/src/app/next.config.mjs .
 COPY --from=build /usr/src/app/package.json .
 
-# set the user and environment variables
-USER node
+# set the environment variables
 ENV HOST=0.0.0.0
 ENV PORT=3000
 EXPOSE ${PORT}
