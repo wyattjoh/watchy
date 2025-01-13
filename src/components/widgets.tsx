@@ -4,6 +4,7 @@ import { BeszelHubWidget } from "./widgets/beszel-hub-widget";
 import { PlexWidget } from "./widgets/plex-widget";
 import { SonarrWidget } from "./widgets/sonarr-widget";
 import { RadarrWidget } from "./widgets/radarr-widget";
+import { NZBGetWidget } from "./widgets/nzbget-widget";
 
 type Props = {
   service: ContainerService;
@@ -24,6 +25,8 @@ export function Widgets({ service }: Props) {
       widgets.push(<BeszelHubWidget key="beszel-hub" service={service} />);
     } else if (service.type === "radarr") {
       widgets.push(<RadarrWidget key="radarr" service={service} />);
+    } else if (service.type === "nzbget") {
+      widgets.push(<NZBGetWidget key="nzbget" service={service} />);
     }
   }
 
