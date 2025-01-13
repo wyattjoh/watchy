@@ -1,0 +1,11 @@
+node_modules
+dist
+.astro
+.dockerignore
+.env
+.gitignore
+.npmrc
+.pnpmrc
+.prettierrc
+.vscode
+.turbo
