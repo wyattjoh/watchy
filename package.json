@@ -9,7 +9,7 @@
     "start": "next start"
   },
   "engines": {
-    "node": "23.x"
+    "bun": "1.x"
   },
   "keywords": [],
   "author": "",
