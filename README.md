@@ -40,6 +40,11 @@ available widget types:
 - `sonarr` - Show currently playing media in [Sonarr](https://sonarr.tv/)
   - `WIDGET_${id.toUpperCase().replace(/-/g, "_")}_SONARR_API_KEY` - The API
     key for the Sonarr API.
+- `nzbget` - Show the status of [NZBGet](https://nzbget.net/)
+  - `WIDGET_${id.toUpperCase().replace(/-/g, "_")}_NZBGET_RESTRICTED_USERNAME` -
+    The username for the NZBGet API.
+  - `WIDGET_${id.toUpperCase().replace(/-/g, "_")}_NZBGET_RESTRICTED_PASSWORD` -
+    The password for the NZBGet API.
 
 If you configure a widget, you will also need to provide any secrets that they
 require. They are keyed based on the service `id` that's configured. So if you
