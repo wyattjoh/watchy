@@ -11,10 +11,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 23
       - name: Enable Corepack
         run: corepack enable pnpm
       - name: Install Node.js
