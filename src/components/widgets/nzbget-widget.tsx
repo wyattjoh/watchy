@@ -51,7 +51,14 @@ export function NZBGetWidget({ service }: Props) {
           return <DataTableColumnHeader column={column} title="Name" />;
         },
         cell: ({ row }) => {
-          const url = new URL(`/system/${row.original.NZBName}`, service.url);
+          if (!service.url) return row.original.NZBName;
+
+          const { pathname } = new URL(service.url);
+          const url = new URL(
+            `${pathname}/system/${row.original.NZBName}`,
+            service.url
+          );
+
           return (
             <span className="flex items-center gap-2">
               <a
