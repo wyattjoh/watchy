@@ -1,6 +1,11 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": [
+    "@svitejs/changesets-changelog-github-compact",
+    {
+      "repo": "wyattjoh/watchy"
+    }
+  ],
   "commit": false,
   "fixed": [],
   "linked": [],
@@ -8,5 +13,8 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [],
-  "privatePackages": { "version": true, "tag": true }
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  }
 }
