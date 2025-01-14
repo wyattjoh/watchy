@@ -1,6 +1,6 @@
 {
   "name": "watchy",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Monitor and display your services running on your Docker host using labels",
   "author": "Wyatt Johnson",
   "private": true,
