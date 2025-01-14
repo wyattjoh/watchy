@@ -1,5 +1,11 @@
 # watchy
 
+## 1.1.6
+
+### Patch Changes
+
+- Fixed data table for NZBGet ([`6ddfc44`](https://github.com/wyattjoh/watchy/commit/6ddfc44615523ad8bc3b4b9904a890c78a2710dd))
+
 ## 1.1.5
 
 ### Patch Changes
