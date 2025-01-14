@@ -49,12 +49,12 @@ const ComposeTemplate = (data: FormSchema) => {
 };
 
 const RunTemplate = (data: FormSchema) => {
-  return `docker run -d --name ${data.name} \\n
-    --label "ca.wyattjoh.watchy.enable=true" \\n
-    --label "ca.wyattjoh.watchy.service.${data.id}.name=${data.name}" \\n
-    --label "ca.wyattjoh.watchy.service.${data.id}.type=${data.type}" \\n
-    --label "ca.wyattjoh.watchy.service.${data.id}.url=${data.url ?? ""}" \\n
-    --label "ca.wyattjoh.watchy.service.${data.id}.tags=${data.tags ?? ""}" \\n
+  return `docker run -d --name ${data.name} \\
+    --label "ca.wyattjoh.watchy.enable=true" \\
+    --label "ca.wyattjoh.watchy.service.${data.id}.name=${data.name}" \\
+    --label "ca.wyattjoh.watchy.service.${data.id}.type=${data.type}" \\
+    --label "ca.wyattjoh.watchy.service.${data.id}.url=${data.url ?? ""}" \\
+    --label "ca.wyattjoh.watchy.service.${data.id}.tags=${data.tags ?? ""}" \\
     ${data.type}`;
 };
 
@@ -88,7 +88,7 @@ export function ConfigureContainerButton() {
           <PlusIcon className="h-4 w-4" /> Configure Container
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Configure Container Labels</DialogTitle>
           <DialogDescription>
