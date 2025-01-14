@@ -22,7 +22,7 @@ import {
   type SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { DataTablePagination } from "../ui/pagination";
 import { DataTableColumnHeader } from "../ui/column-header";
@@ -42,48 +42,25 @@ type Props = {
   service: ContainerService;
 };
 
+const columns: ColumnDef<NZBGetListGroup>[] = [
+  {
+    accessorKey: "NZBName",
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Name" />;
+    },
+  },
+  {
+    accessorKey: "Status",
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Status" />;
+    },
+    cell: ({ row }) => {
+      return <Badge variant="outline">{row.original.Status}</Badge>;
+    },
+  },
+];
+
 export function NZBGetWidget({ service }: Props) {
-  const columns: ColumnDef<NZBGetListGroup>[] = useMemo(
-    () => [
-      {
-        accessorKey: "NZBName",
-        header: ({ column }) => {
-          return <DataTableColumnHeader column={column} title="Name" />;
-        },
-        cell: ({ row }) => {
-          if (!service.url) return row.original.NZBName;
-
-          const { pathname } = new URL(service.url);
-          const url = new URL(
-            `${pathname}/system/${row.original.NZBName}`,
-            service.url
-          );
-
-          return (
-            <span className="flex items-center gap-2">
-              <a
-                href={url.toString()}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                {row.original.NZBName}
-              </a>
-            </span>
-          );
-        },
-      },
-      {
-        accessorKey: "Status",
-        header: ({ column }) => {
-          return <DataTableColumnHeader column={column} title="Status" />;
-        },
-        cell: ({ row }) => {
-          return <Badge variant="outline">{row.original.Status}</Badge>;
-        },
-      },
-    ],
-    [service]
-  );
   const [refetchInterval, setRefetchInterval] = useState(
     DEFAULT_REFETCH_INTERVAL
   );
@@ -154,7 +131,7 @@ export function NZBGetWidget({ service }: Props) {
             </DialogHeader>
             <div className="flex items-center py-4">
               <Input
-                placeholder="Filter systems..."
+                placeholder="Filter downloads..."
                 value={
                   (table.getColumn("NZBName")?.getFilterValue() as string) || ""
                 }
