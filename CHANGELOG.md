@@ -1,5 +1,13 @@
 # watchy
 
+## 1.1.10
+
+### Patch Changes
+
+- Fixed create labels command output ([`790c76d`](https://github.com/wyattjoh/watchy/commit/790c76d4ec09f3b4aeae5e157df44125435c64aa))
+
+- Cleaned up health widget ([`77c2c79`](https://github.com/wyattjoh/watchy/commit/77c2c79f65553068bab4b964175df82ceb07ab84))
+
 ## 1.1.9
 
 ### Patch Changes
