@@ -27,6 +27,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm changesets tag
+          publish: pnpm changeset tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
