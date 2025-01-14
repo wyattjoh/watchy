@@ -1,5 +1,0 @@
----
-"watchy": patch
----
-
-Configuring changesets
