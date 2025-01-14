@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "../ui/table";
 import { WidgetButton } from "../widget-button";
+import { Badge } from "../ui/badge";
 
 const statusConfig = {
   healthy: {
@@ -75,22 +76,6 @@ export function HealthWidget({ service }: Props) {
               Recent health events for this container.
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 mb-4">
-            <div className="font-medium">Current Health:</div>
-            <div
-              className={cn(
-                "px-2 py-1 rounded text-sm",
-                service.health
-                  ? statusConfig[service.health].color
-                  : statusConfig.none.color,
-                service.health
-                  ? statusConfig[service.health].textColor
-                  : statusConfig.none.textColor
-              )}
-            >
-              {service.health || "none"}
-            </div>
-          </div>
           {service.healthLogs ? (
             <Table>
               <TableHeader>
@@ -107,7 +92,9 @@ export function HealthWidget({ service }: Props) {
                     <TableCell>
                       {new Date(log.start).toLocaleString()}
                     </TableCell>
-                    <TableCell>{log.exitCode}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{log.exitCode}</Badge>
+                    </TableCell>
                     <TableCell>
                       {log.output ? (
                         <Dialog>
