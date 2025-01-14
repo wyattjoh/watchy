@@ -1,5 +1,11 @@
 # watchy
 
+## 1.1.9
+
+### Patch Changes
+
+- Updated release flow ([`bb3fdd5`](https://github.com/wyattjoh/watchy/commit/bb3fdd5ff28112eacc2a33fb531a2b4d4717783c))
+
 ## 1.1.8
 
 ### Patch Changes
