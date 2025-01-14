@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.changesets.outputs.published }}
+      publishedPackages: ${{ steps.changesets.outputs.publishedPackages }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -32,9 +33,6 @@ jobs:
           publish: pnpm changeset tag
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN_PULL_REQUESTS }}
-      - name: Set output
-        if: steps.changesets.outputs.published == 'true'
-        run: echo "published=true" >> $GITHUB_OUTPUT
   deploy:
     name: Deploy
     needs: release
@@ -57,9 +55,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{version}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
+            type=semver,pattern={{major}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
             type=sha
       - name: Build and push
         uses: docker/build-push-action@v6
