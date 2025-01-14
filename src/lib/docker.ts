@@ -46,7 +46,9 @@ async function getContainerServices(container: Container) {
   return services;
 }
 
-async function getContainersServices(containers: Container[]) {
+async function getContainersServices(
+  containers: Container[]
+): Promise<ContainerService[]> {
   const services: ContainerService[] = [];
   for (const container of containers) {
     const service = await getContainerServices(container);
