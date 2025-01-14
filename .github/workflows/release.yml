@@ -36,6 +36,10 @@ jobs:
     needs: release
     runs-on: ubuntu-latest
     if: needs.release.outputs.published == 'true'
+    strategy:
+      fail-fast: true
+      matrix:
+        package: ${{ fromJson(needs.release.outputs.publishedPackages) }}
     steps:
       - name: Login to GHCR
         uses: docker/login-action@v3
@@ -53,9 +57,9 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=semver,pattern={{version}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
-            type=semver,pattern={{major}},value=${{ fromJson(needs.release.outputs.publishedPackages).package.version }}
+            type=semver,pattern={{version}},value=${{ matrix.package.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ matrix.package.version }}
+            type=semver,pattern={{major}},value=${{ matrix.package.version }}
             type=sha
       - name: Build and push
         uses: docker/build-push-action@v6
