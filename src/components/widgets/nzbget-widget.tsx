@@ -1,7 +1,6 @@
 "use client";
 
 import { CloudDownload, Download, Gauge } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Widget } from "../widget";
 import type { ContainerService } from "@/types/service";
 import {
@@ -29,12 +28,10 @@ import { DataTableColumnHeader } from "../ui/column-header";
 import { DataTable } from "../ui/data-table";
 import { DebugData } from "../debug-data";
 import { WidgetButton, WidgetButtonFallback } from "../widget-button";
-import type {
-  NZBGetListGroup,
-  NZBGetWidgetResponse,
-} from "@/app/api/widgets/[id]/nzbget/route";
 import { formatBytes } from "@/lib/format-bytes";
 import { Badge } from "../ui/badge";
+import { trpc } from "@/trpc/client";
+import type { NZBGetListGroup } from "@/trpc/routers/widgets/nzbget";
 
 const DEFAULT_REFETCH_INTERVAL = 60000;
 
@@ -64,23 +61,20 @@ export function NZBGetWidget({ service }: Props) {
   const [refetchInterval, setRefetchInterval] = useState(
     DEFAULT_REFETCH_INTERVAL
   );
-  const { data } = useQuery({
-    queryKey: ["widgets", "nzbget", service.id],
-    queryFn: async (): Promise<NZBGetWidgetResponse> => {
-      const response = await fetch(`/api/widgets/${service.id}/nzbget`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch NZBGet response");
-      }
+  const { data: status } = trpc.widgets.nzbget.getStatus.useQuery(
+    { id: service.id },
+    { refetchInterval }
+  );
 
-      return response.json() as Promise<NZBGetWidgetResponse>;
-    },
-    refetchInterval,
-  });
+  const { data: listGroups } = trpc.widgets.nzbget.getListGroups.useQuery(
+    { id: service.id },
+    { refetchInterval }
+  );
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const table = useReactTable({
-    data: data?.listGroups.result ?? [],
+    data: listGroups?.result ?? [],
     columns,
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
@@ -95,29 +89,29 @@ export function NZBGetWidget({ service }: Props) {
   });
 
   useEffect(() => {
-    if (!data) return;
+    if (!listGroups) return;
 
-    if (data.listGroups.result.length === 0) {
+    if (listGroups.result.length === 0) {
       setRefetchInterval(DEFAULT_REFETCH_INTERVAL);
     } else {
       setRefetchInterval(1000);
     }
-  }, [data]);
+  }, [listGroups]);
 
   return (
     <Widget title="Downloads" icon={<CloudDownload className="w-4 h-4" />}>
-      {data ? (
+      {listGroups && status ? (
         <Dialog>
           <DialogTrigger asChild>
             <WidgetButton>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <Download />
-                  {data.listGroups.result.length}
+                  {listGroups.result.length}
                 </div>
                 <div className="flex items-center gap-2">
                   <Gauge />
-                  {formatBytes(data.status.result.DownloadRate)}/s
+                  {formatBytes(status.result.DownloadRate)}/s
                 </div>
               </div>
             </WidgetButton>
@@ -143,7 +137,7 @@ export function NZBGetWidget({ service }: Props) {
             </div>
             <DataTable table={table} columns={columns} />
             <DataTablePagination table={table} />
-            <DebugData data={data} />
+            <DebugData data={{ status, listGroups }} />
           </DialogContent>
         </Dialog>
       ) : (

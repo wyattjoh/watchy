@@ -1,9 +1,8 @@
-import { getServices } from "@/lib/docker";
-import { NextResponse } from "next/server";
+import { caller } from "@/trpc/routers/app";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const services = await getServices();
-  return NextResponse.json(services);
+  const services = await caller.services();
+  return Response.json(services);
 }

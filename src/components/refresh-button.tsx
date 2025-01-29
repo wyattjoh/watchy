@@ -3,19 +3,16 @@
 import { RefreshCwIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useIsFetching, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
 export default function RefreshButton() {
-  const router = useRouter();
   const isFetching = useIsFetching();
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
 
   const handleRefresh = useCallback(() => {
-    router.refresh();
-    void queryClient.refetchQueries();
-  }, [router, queryClient]);
+    void client.refetchQueries();
+  }, [client]);
 
   return (
     <Button variant="outline" onClick={handleRefresh} disabled={isFetching > 0}>

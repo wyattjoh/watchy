@@ -1,35 +1,25 @@
-import { debounce } from "@/lib/debounce";
-import { getEvents } from "@/lib/docker";
+import { caller } from "@/trpc/routers/app";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
-  const stream = await getEvents(request.signal);
+  const events = await caller.events(undefined);
 
-  let terminated = false;
-  const sendUpdate = debounce(
-    (controller: TransformStreamDefaultController<string>) => {
-      if (request.signal.aborted || terminated) return;
-      controller.enqueue("data: update\n\n");
-    },
-    500,
-    1000
-  );
+  const readable = new ReadableStream<string>({
+    async start(controller) {
+      for await (const event of events) {
+        if (!event) break;
 
-  const transformer = new TransformStream<string, string>({
-    transform(_, controller) {
-      sendUpdate(controller);
+        controller.enqueue("data: update\n\n");
+      }
+      console.log("closing");
+      controller.close();
     },
-    flush() {
-      terminated = true;
-    },
+    // signal: request.signal,
   });
 
   return new Response(
-    stream
-      .pipeThrough(new TextDecoderStream(), { signal: request.signal })
-      .pipeThrough(transformer, { signal: request.signal })
-      .pipeThrough(new TextEncoderStream(), { signal: request.signal }),
+    readable.pipeThrough(new TextEncoderStream(), { signal: request.signal }),
     {
       headers: {
         // Set the headers for Server-Sent Events (SSE)

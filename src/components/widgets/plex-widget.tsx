@@ -1,9 +1,7 @@
 "use client";
 
 import { TvMinimalPlay } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
-import type { PlexWidgetData } from "../../app/api/widgets/[id]/plex/route";
 import {
   Dialog,
   DialogContent,
@@ -24,24 +22,17 @@ import type { ContainerService } from "@/types/service";
 import { Widget } from "../widget";
 import { DebugData } from "../debug-data";
 import { WidgetButton, WidgetButtonFallback } from "../widget-button";
+import { trpc } from "@/trpc/client";
 
 type Props = {
   service: ContainerService;
 };
 
 export function PlexWidget({ service }: Props) {
-  const { data } = useQuery({
-    queryKey: ["widgets", "plex", service.id],
-    queryFn: async (): Promise<PlexWidgetData> => {
-      const response = await fetch(`/api/widgets/${service.id}/plex`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch Plex sessions");
-      }
-
-      return response.json() as Promise<PlexWidgetData>;
-    },
-    refetchInterval: 10000,
-  });
+  const { data } = trpc.widgets.plex.getSessions.useQuery(
+    { id: service.id },
+    { refetchInterval: 10000 }
+  );
 
   return (
     <Widget

@@ -155,7 +155,7 @@ export async function getService(
 }
 
 export async function getEvents(
-  signal: AbortSignal
+  signal: AbortSignal | undefined
 ): Promise<ReadableStream<Uint8Array>> {
   const request = new URL("http://localhost/events");
   request.searchParams.set(

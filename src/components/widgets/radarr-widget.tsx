@@ -1,7 +1,6 @@
 "use client";
 
 import { Video } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Widget } from "../widget";
 import type { ContainerService } from "@/types/service";
 import {
@@ -29,8 +28,9 @@ import { DataTableColumnHeader } from "../ui/column-header";
 import { DataTable } from "../ui/data-table";
 import { DebugData } from "../debug-data";
 import { WidgetButton, WidgetButtonFallback } from "../widget-button";
-import type { GetMoviesResponse } from "@/app/api/widgets/[id]/radarr/route";
 import { formatBytes } from "@/lib/format-bytes";
+import { trpc } from "@/trpc/client";
+import type { GetMoviesResponse } from "@/trpc/routers/widgets/radarr";
 
 type Props = {
   service: ContainerService;
@@ -85,18 +85,10 @@ export function RadarrWidget({ service }: Props) {
     ],
     [service]
   );
-  const { data } = useQuery({
-    queryKey: ["widgets", "radarr", service.id],
-    queryFn: async (): Promise<GetMoviesResponse> => {
-      const response = await fetch(`/api/widgets/${service.id}/radarr`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch Radarr movies");
-      }
-
-      return response.json() as Promise<GetMoviesResponse>;
-    },
-    refetchInterval: 60000,
-  });
+  const { data } = trpc.widgets.radarr.getMovies.useQuery(
+    { id: service.id },
+    { refetchInterval: 60000 }
+  );
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

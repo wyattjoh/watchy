@@ -1,7 +1,6 @@
 "use client";
 
 import { HardDrive } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Widget } from "../widget";
 import type { ContainerService } from "@/types/service";
 import { cn } from "@/lib/utils";
@@ -29,12 +28,10 @@ import { DataTablePagination } from "../ui/pagination";
 import { DataTableColumnHeader } from "../ui/column-header";
 import { DataTable } from "../ui/data-table";
 import { DebugData } from "../debug-data";
-import type {
-  BeszelResponse,
-  ItemsItem,
-} from "@/app/api/widgets/[id]/beszel/route";
 import { WidgetButton, WidgetButtonFallback } from "../widget-button";
 import { formatSeconds } from "@/lib/format-seconds";
+import { trpc } from "@/trpc/client";
+import type { ItemsItem } from "@/trpc/routers/widgets/beszel";
 
 const DEFAULT_REFETCH_INTERVAL = 60000;
 
@@ -126,18 +123,10 @@ export function BeszelHubWidget({ service }: Props) {
   const [refetchInterval, setRefetchInterval] = useState(
     DEFAULT_REFETCH_INTERVAL
   );
-  const { data } = useQuery({
-    queryKey: ["widgets", "beszel", service.id],
-    queryFn: async (): Promise<BeszelResponse> => {
-      const response = await fetch(`/api/widgets/${service.id}/beszel`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch Beszel series");
-      }
-
-      return response.json() as Promise<BeszelResponse>;
-    },
-    refetchInterval,
-  });
+  const { data } = trpc.widgets.beszel.getStatus.useQuery(
+    { id: service.id },
+    { refetchInterval }
+  );
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

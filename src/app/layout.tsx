@@ -1,6 +1,5 @@
-import { QueryProvider } from "@/components/query-provider";
+import { TRPCProvider } from "@/trpc/client";
 import "./layout.css";
-import ServiceRevalidator from "@/components/service-revalidator";
 
 export default function RootLayout({
   children,
@@ -10,10 +9,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-        <QueryProvider>
+        <TRPCProvider>
           <main>{children}</main>
-          <ServiceRevalidator />
-        </QueryProvider>
+        </TRPCProvider>
       </body>
     </html>
   );

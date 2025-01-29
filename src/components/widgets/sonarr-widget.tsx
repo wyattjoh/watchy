@@ -1,10 +1,8 @@
 "use client";
 
 import { Tv } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Widget } from "../widget";
 import type { ContainerService } from "@/types/service";
-import type { GetSeriesResponse } from "@/app/api/widgets/[id]/sonarr/route";
 import {
   Dialog,
   DialogTrigger,
@@ -31,6 +29,8 @@ import { DataTable } from "../ui/data-table";
 import { DebugData } from "../debug-data";
 import { WidgetButton, WidgetButtonFallback } from "../widget-button";
 import { formatBytes } from "@/lib/format-bytes";
+import { trpc } from "@/trpc/client";
+import type { GetSeriesResponse } from "@/trpc/routers/widgets/sonarr";
 
 type Props = {
   service: ContainerService;
@@ -85,18 +85,10 @@ export function SonarrWidget({ service }: Props) {
     ],
     [service]
   );
-  const { data } = useQuery({
-    queryKey: ["widgets", "sonarr", service.id],
-    queryFn: async (): Promise<GetSeriesResponse> => {
-      const response = await fetch(`/api/widgets/${service.id}/sonarr`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch Sonarr series");
-      }
-
-      return response.json() as Promise<GetSeriesResponse>;
-    },
-    refetchInterval: 60000,
-  });
+  const { data } = trpc.widgets.sonarr.getSeries.useQuery(
+    { id: service.id },
+    { refetchInterval: 60000 }
+  );
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

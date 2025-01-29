@@ -1,10 +1,15 @@
-import type { ContainerService } from "@/types/service";
+"use client";
+
+import { trpc } from "@/trpc/client";
 import { ServiceCard } from "./service-card";
 
-export async function Dashboard(props: {
-  services: Promise<ContainerService[]>;
-}) {
-  const services = await props.services;
+export function Dashboard() {
+  const [services, { refetch }] = trpc.services.useSuspenseQuery();
+  trpc.events.useSubscription(undefined, {
+    onData() {
+      void refetch();
+    },
+  });
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
