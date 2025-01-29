@@ -1,5 +1,11 @@
 # watchy
 
+## 1.1.11
+
+### Patch Changes
+
+- Updated to trpc for communication ([`419d8a8`](https://github.com/wyattjoh/watchy/commit/419d8a8a99238a265c0f387c6f5b5ad88f343e62))
+
 ## 1.1.10
 
 ### Patch Changes
