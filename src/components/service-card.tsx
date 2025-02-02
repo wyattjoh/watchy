@@ -7,7 +7,7 @@ import { Widgets } from "./widgets";
 
 export function ServiceCard({ service }: { service: ContainerService }) {
   return (
-    <Card className="bg-gradient-to-br from-gray-900 to-gray-800 motion-preset-slide-down">
+    <Card className="bg-linear-to-br from-gray-900 to-gray-800 motion-preset-slide-down">
       <CardHeader>
         <CardTitle className="flex flex-row justify-between space-x-4 items-center">
           <div>{service.name}</div>
