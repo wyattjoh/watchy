@@ -9,7 +9,7 @@ COPY package.json pnpm-lock.yaml .
 
 # install runtime dependencies (including pnpm)
 RUN apk add --no-cache curl
-RUN corepack enable && corepack install
+RUN npm install -g corepack@latest && corepack enable && corepack install
 
 # install production dependencies
 FROM base AS install
