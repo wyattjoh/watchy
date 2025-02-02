@@ -1,0 +1,5 @@
+---
+"watchy": patch
+---
+
+Upgraded dependancies
