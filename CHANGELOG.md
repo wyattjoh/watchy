@@ -1,5 +1,11 @@
 # watchy
 
+## 1.1.12
+
+### Patch Changes
+
+- Upgraded dependancies ([`410f96e`](https://github.com/wyattjoh/watchy/commit/410f96e09382b7664efa1049d1fadbbf7feb2c43))
+
 ## 1.1.11
 
 ### Patch Changes
