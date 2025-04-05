@@ -1,3 +1,5 @@
+import "server-only";
+
 import { fetch, Agent } from "undici";
 import type { ContainerInfo, ContainerService } from "@/types/service";
 import { parseLabels } from "./labels";
@@ -8,7 +10,7 @@ const dispatcher = new Agent({
   },
 });
 
-async function getContainerServices(container: Container) {
+async function listContainerServices(container: Container) {
   const labels = parseLabels(container.Labels);
   if (!labels.enable) {
     return [];
@@ -46,24 +48,28 @@ async function getContainerServices(container: Container) {
   return services;
 }
 
-async function getContainersServices(
+async function listContainersServices(
   containers: Container[]
 ): Promise<ContainerService[]> {
   const services: ContainerService[] = [];
   for (const container of containers) {
-    const service = await getContainerServices(container);
+    const service = await listContainerServices(container);
     services.push(...service);
   }
 
   return services.sort((a, b) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    return a.name.localeCompare(b.name);
   });
 }
 
-type Container = {
+export type Container = {
   Id: string;
+  Image: string;
+  Created: number;
+  Names: string[];
   Status: string;
   Labels: Record<string, string>;
+  [key: string]: unknown;
 };
 
 async function inspectContainer(id: string) {
@@ -75,7 +81,18 @@ async function inspectContainer(id: string) {
   return response.json() as Promise<ContainerInfo>;
 }
 
-async function getContainers() {
+export async function listAllContainers() {
+  const url = new URL("http://localhost/containers/json");
+  url.searchParams.set("all", "true");
+
+  const response = await fetch(url, {
+    dispatcher,
+  });
+
+  return response.json() as Promise<Container[]>;
+}
+
+async function listContainers() {
   const url = new URL("http://localhost/containers/json");
   url.searchParams.set("all", "true");
   url.searchParams.set(
@@ -108,10 +125,10 @@ async function getContainer(id: string, type: string) {
   return response.json() as Promise<Container[]>;
 }
 
-export async function getServices() {
+export async function listServices() {
   try {
-    const containers = await getContainers();
-    const services = await getContainersServices(containers);
+    const containers = await listContainers();
+    const services = await listContainersServices(containers);
     return services;
   } catch {
     return [];
@@ -139,7 +156,7 @@ export async function getService(
     return null;
   }
 
-  const services = await getContainerServices(container);
+  const services = await listContainerServices(container);
   if (services.length === 0) {
     console.warn("No services found for container", container.Id);
     return null;
@@ -154,7 +171,7 @@ export async function getService(
   return service;
 }
 
-export async function getEvents(
+export async function getEventsStream(
   signal: AbortSignal | undefined
 ): Promise<ReadableStream<Uint8Array>> {
   const request = new URL("http://localhost/events");

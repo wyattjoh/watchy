@@ -1,9 +1,9 @@
-import { getEvents } from "@/lib/docker";
+import { getEventsStream } from "@/lib/docker";
 import { setTimeout } from "node:timers/promises";
 import { baseProcedure } from "../init";
 
 export const eventsRouter = baseProcedure.subscription(async function* (opts) {
-  const stream = await getEvents(opts.signal);
+  const stream = await getEventsStream(opts.signal);
   const reader = stream.getReader();
 
   let promise: Promise<ReadableStreamReadResult<Uint8Array>> | null = null;
@@ -50,6 +50,6 @@ export const eventsRouter = baseProcedure.subscription(async function* (opts) {
     }
     throw error;
   } finally {
-    reader.releaseLock();
+    await reader.cancel();
   }
 });

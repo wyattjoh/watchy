@@ -30,7 +30,7 @@ export default function Home() {
 }
 
 async function DashboardWrapper() {
-  await trpc.services.prefetch();
+  await trpc.containers.listServices.prefetch();
 
   return (
     <HydrateClient>

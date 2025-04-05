@@ -1,10 +1,10 @@
 import { createCallerFactory, createTRPCRouter } from "../init";
 import { widgetsRouter } from "./widgets/widgets";
 import { eventsRouter } from "./events";
-import { servicesRouter } from "./services";
+import { containersRouter } from "./containers";
 
 export const appRouter = createTRPCRouter({
-  services: servicesRouter,
+  containers: containersRouter,
   events: eventsRouter,
   widgets: widgetsRouter,
 });
