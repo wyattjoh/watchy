@@ -1,5 +1,11 @@
 # watchy
 
+## 1.2.0
+
+### Minor Changes
+
+- Upgraded deps, added all container table ([`bcc63ee`](https://github.com/wyattjoh/watchy/commit/bcc63ee10163cd1fa0aa14e21920e88067092421))
+
 ## 1.1.12
 
 ### Patch Changes
