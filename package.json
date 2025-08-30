@@ -38,7 +38,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.487.0",
-    "next": "15.3.0-canary.38",
+    "next": "15.4.7",
     "node-docker-api": "^1.1.22",
     "react": "19.2.0-canary-040f8286-20250402",
     "react-dom": "19.2.0-canary-040f8286-20250402",
