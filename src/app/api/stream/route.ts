@@ -1,8 +1,8 @@
+import { connection } from "next/server";
 import { caller } from "@/trpc/routers/app";
 
-export const dynamic = "force-dynamic";
-
 export async function GET(request: Request) {
+  await connection();
   const events = await caller.events(undefined);
 
   const readable = new ReadableStream<string>({

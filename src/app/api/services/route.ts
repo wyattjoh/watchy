@@ -1,8 +1,8 @@
+import { connection } from "next/server";
 import { caller } from "@/trpc/routers/app";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
+  await connection();
   const services = await caller.containers.listServices();
   return Response.json(services);
 }
